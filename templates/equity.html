@@ -1,0 +1,369 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+  <title>Xen Equity</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- Material Kit CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/material-dashboard.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/demo/demo.css') }}" />
+</head>
+
+<body>
+  <div class="wrapper ">
+    <div class="sidebar" data-color="purple" data-background-color="white">
+      <div class="logo">
+        <a class="simple-text logo-mini">
+          Welcome
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <ul class="nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="#0">
+              <i class="material-icons">dashboard</i>
+              <p>Equities</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="user_profile">
+              <i class="material-icons">person</i>
+              <p>User Profile</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="transactions">
+              <i class="material-icons">content_paste</i>
+              <p>Transaction list</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="bank_transfer">
+              <i class="material-icons">loop</i>
+              <p>Make a transfer</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="portfolio">
+              <i class="material-icons">account_balance_wallet</i>
+              <p>Portfolio</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+        <div class="container-fluid">
+          <div class="collapse navbar-collapse justify-content-end">
+            <form class="navbar-form" action="result" method="post">
+              <div class="input-group no-border">
+                <input type="text" name="stockSymbol" value="" class="form-control" placeholder="Search...">
+                <button type="submit" value="Submit" class="btn btn-white btn-round btn-just-icon">
+                  <i class="material-icons">search</i>
+                  <div class="ripple-container"></div>
+                </button>
+              </div>
+            </form>
+            <div class="collapse navbar-collapse justify-content-end">
+              <a class="navbar-icon" href="logout"><i class="material-icons">power_settings_new</i>Logout</a>
+            </div>
+          </div>
+      </nav>
+      {% if sName %}
+      <div class="content">
+        <div class="container-fluid">
+          <!-- Company Info -->
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h2 class="card-title">{{ sName }}</h2>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="tim-typo">
+                  <h2>
+                    <span class="tim-note">Listed Exchange</span>{{ sExchange }}</h2>
+                </div>
+                <div class="tim-typo">
+                  <h2>
+                    <span class="tim-note">Industry</span>{{ sIndustry }}</h2>
+                </div>
+                <div class="tim-typo">
+                  <h2>
+                    <span class="tim-note">Sector</span>{{ sSector }}</h2>
+                </div>
+                <div class="tim-typo">
+                  <h2>
+                    <span class="tim-note">Website</span>{{ sWebsite }}</h2>
+                </div>
+                <div class="tim-typo">
+                  <h2>
+                    <span class="tim-note">Chief Executive Officer</span>{{ sCEO }}</h2>
+                </div>
+                <div class="tim-typo">
+                  <span class="tim-note">Company Description</span>
+                  <blockquote class="blockquote">
+                    <p>
+                      {{ sDesc }}
+                    </p>
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Company Info End -->
+
+          <!--Stock Chart -->
+          <div class="row">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe class="embed-responsive-item" src="//plot.ly/~xuanmingt/0.embed"></iframe>
+            </div>
+          </div>
+          <!-- Stock Chart End-->
+
+          <div class="row">
+            <!-- Card 1 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card card-stats">
+                <div class="card-header card-header-warning card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">attach_money</i>
+                  </div>
+                  <p class="card-category">Price</p>
+                  <h3 id="equityPrice" class="card-title"> {{ sPrice }} </h3>
+                </div>
+              </div>
+            </div>
+            <!-- Card 1 End -->
+
+            <!-- Card 2 -->
+            <div class="col-lg-3 col-md-6 col-sm-6">
+              <div class="card card-stats">
+                <!-- Change card colour based on percentage change value -->
+                {% if sPositive %}
+                <div class="card-header card-header-success card-header-icon">
+                  {% else %}
+                  <div class="card-header card-header-danger card-header-icon">
+                    {% endif %}
+                    <div class="card-icon">
+                      <i class="material-icons">swap_vert</i>
+                    </div>
+                    <p class="card-category">Percentage Change</p>
+                    <h3 class="card-title">{{ sChangeP }}</h3>
+                  </div>
+                </div>
+              </div>
+              <!-- Card 2 End -->
+
+              <!-- Card 3 -->
+              <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                  <div class="card-header card-header-primary card-header-icon">
+                    <div class="card-icon">
+                      <i class="material-icons">timeline</i>
+                    </div>
+                    <p class="card-category">Beta</p>
+                    <h3 class="card-title">{{ sBeta }}</h3>
+                  </div>
+                </div>
+              </div>
+              <!-- Card 3 End -->
+
+              <!-- Card 4 -->
+              <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                  <div class="card-header card-header-info card-header-icon">
+                    <div class="card-icon">
+                      <i class="material-icons">insert_chart</i>
+                    </div>
+                    <p class="card-category">Average Volume </p>
+                    <h3 class="card-title">{{ sVolume }}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Card 4 End -->
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header card-header-primary">
+                  <h2 class="card-title">Recent news on {{ tCode }}</h2>
+                  <h3 class="card-category">Retrieved from newsapi.org</h3>
+                </div>
+                <div class="card-body pre-scrollable">
+                  <div class="row">
+                    {% for index in eNewsSource%}
+                    <div class="col-md-12">
+                      <h3>{{ eNewsTitle[loop.index0] }}<h3>
+                    </div>
+                    <div class="col-md-12">
+                      <p>{{ eNewsDesc[loop.index0] }}</p>
+                    </div>
+                    <div class="col-md-12">
+                      <p>{{ eNewsSource[loop.index0] }} - {{ eNewsDate[loop.index0] }} - <a
+                          href={{ eNewsURL[loop.index0] }} target="_blank">Full article</a></p>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <button id="toggleButton" class="btn btn-primary btn-block" onclick="toggleField()">Purchase
+                Stock</button>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+
+          <div id="equityDIV" style="display: none;" class="card">
+            <div class="card-body">
+              <form action="equity_process" method="post">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">My Balance</label>
+                      <p>${{ eBalance }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Equity to buy</label>
+                      <input class="form-control" name="abcTickerCode" value="{{tCode}}" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Equity Price</label>
+                      <p>{{ sPrice }}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Quantity</label>
+                      <input id="quantity" type="number" name="eQuantity" class="form-control" value=""
+                        onchange="calculateFees()" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Total Price of Equities</label>
+                      <p id="ePurchasePrice">$</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Brokerage Fees</label>
+                      <p id="eBrokerageFees">$</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Total Transaction Value</label>
+                      <input id="eTotal" class="form-control" name="eTA" value="" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <button class="btn btn-primary pull-right" type="submit" value="Submit">Buy Equities</button>
+                      <div class="clearfix"></div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="content">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h2 class="card-title">Search for Equity</h2>
+              <h3 class="card-category">Search for equity in the search box</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header card-header-primary">
+                  <h2 class="card-title">Top business headlines in US now</h2>
+                  <h3 class="card-category">Retrieved from newsapi.org</h3>
+                </div>
+                <div class="card-body pre-scrollable">
+                  <div class="row">
+                    {% for index in eNewsSource%}
+                    <div class="col-md-12">
+                      <h3>{{ eNewsTitle[loop.index0] }}<h3>
+                    </div>
+                    <div class="col-md-12">
+                      <p>{{ eNewsDesc[loop.index0] }}</p>
+                    </div>
+                    <div class="col-md-12">
+                      <p>{{ eNewsSource[loop.index0] }} - {{ eNewsDate[loop.index0] }} - <a
+                          href={{ eNewsURL[loop.index0] }} target="_blank">Full article</a></p>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!--<script src="assets/demo/demo.js"></script>-->
+    <script src="{{ url_for('static', filename='assets/demo/demo.js') }}"></script>
+    <script>
+      function calculateFees() {
+        var quantity = parseInt(document.getElementById("quantity").value);
+        var price = parseFloat(document.getElementById("equityPrice").innerText);
+        var purchasePrice = (quantity * price);
+        var brokerageFees = (0.0025 * purchasePrice);
+        var total = (purchasePrice + brokerageFees);
+
+        if (parseFloat(total) <= 500) {
+          document.getElementById("ePurchasePrice").innerHTML = purchasePrice;
+          document.getElementById("eBrokerageFees").innerHTML = brokerageFees;
+          document.getElementById("eTotal").value = total;
+        } else {
+          maxQuantity = Math.floor(500 / parseFloat(price))
+          var alertText = "The total transactional cost exceeds $500, the maximum quantity is " + String(maxQuantity) + ".";
+          alert(alertText);
+          document.getElementById("quantity").value = 0;
+        }
+      }
+
+      function toggleField() {
+        var x = document.getElementById("equityDIV")
+        if (x.style.display === "none") {
+          x.style.display = "block";
+          document.getElementById("toggleButton").innerText = "Hide Fields"
+          x.scrollIntoView();
+        } else {
+          x.style.display = "none";
+          document.getElementById("toggleButton").innerText = "Purchase Stock"
+        }
+      }
+    </script>
+
+</body>
+
+</html>
