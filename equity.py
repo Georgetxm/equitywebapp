@@ -11,10 +11,10 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 app.config['SESSION_TYPE'] = 'memcached'
-app.config['SECRET_KEY'] = '38ba6bb95d3811d4199d4eb155ef0a44'
+app.config['SECRET_KEY'] = 'fidor secret key'
 
-client_id = "d3f28369aa3057b6"
-client_secret = "38ba6bb95d3811d4199d4eb155ef0a44"
+client_id = "fidor client id"
+client_secret = "fidor client secret"
 
 authorization_base_url = 'https://apm.tp.sandbox.fidor.com/oauth/authorize'
 token_url = 'https://apm.tp.sandbox.fidor.com/oauth/token'
@@ -22,7 +22,7 @@ redirect_uri = 'http://localhost:5000/callback'
 
 
 fireBaseConfig = {
-    "apiKey": "AIzaSyD78f3hnAwAjZmOn80D2W1AvZPAY_TQKEg",
+    "apiKey": "firebase api key",
     "authDomain": "security-ownership.firebaseapp.com",
     "databaseURL": "https://security-ownership.firebaseio.com",
     "projectId": "security-ownership",
